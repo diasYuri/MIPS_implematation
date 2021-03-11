@@ -32,11 +32,28 @@ class Mips
         int Registers[32];
 
         // Unidade de controle
-        uControl *uc = new uControl();
+        uControl uc;
+
+        //
+        int A;
+        int B;
+        unsigned int IR;
+        int ALUout;
+        int MDR;
 
 
-        void leTxt(string nometxt);
+        void leTxt(string nometxt); 
         unsigned int binToDec(string bin, int len);
+        void decodInstr(int instr);
+        void ALU(bool ALUSrcA, int ALUSrcB, int ALUOp);
+        void MultiplexPc(int result);
+        void buscaReg(int rs, int rt);
+
+        void etapa01();
+        void etapa02();
+        void etapa03();
+        void etapa04();
+        void etapa05();
 
 
 };

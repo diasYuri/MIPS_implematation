@@ -166,7 +166,6 @@ void decodInstr(int instr = 2149231339)
 
 
 
-
 }
 
 void executaInstr(int instr)
@@ -201,6 +200,8 @@ int main()
 
     Mips test;
     test.start();
+
+
 
 
     return 0;
