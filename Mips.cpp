@@ -27,18 +27,18 @@ Mips::~Mips()
     delete [] memoria;
 }
 
-void Mips::ALU(bool ALUSrcA, int ALUSrcB, int ALUOp)
+void Mips::ALU()
 {
     int a, b, aluresult;
     cout<<"ALU ok"<<endl;
 
     //Multiplexadores
-    if(ALUSrcA)
+    if(uc.getALUSrcA())
         a = A;
     else
         a = pc;
 
-    switch(ALUSrcB)
+    switch(uc.getALUSrcB())
     {  
         case 0:
             b = B;
@@ -48,13 +48,15 @@ void Mips::ALU(bool ALUSrcA, int ALUSrcB, int ALUOp)
             break;
         //case 2:
             //b =  
-        //case 3:
+        case 3:
+            SignExtension();
+            break;
         default:
             cout<<"error aluscrb"<<endl;
     }
 
     //ALUop
-    switch(ALUOp)
+    switch(uc.getALUOp())
     {
         case 0:
             aluresult = a+b;
@@ -75,6 +77,26 @@ void Mips::ALU(bool ALUSrcA, int ALUSrcB, int ALUOp)
 
     ALUout = aluresult;
 
+}
+
+void Mips::SignExtension()
+{
+    bitset<16> res = IR;
+    bitset<32> ext;
+    cout<<res<<endl;
+
+    int convertido;
+    if(res[15] == 1)
+    {
+        res = (~res);//inverte res ATENÇÃO
+        convertido = (res.to_ulong() + 1) * -1;
+    }
+    else
+        convertido = res.to_ulong();
+    ext = convertido;
+    cout<<res<<endl;
+    cout<<convertido<<endl;
+    cout<<ext<<endl;
 }
 
 void Mips::MultiplexPc(int result)
@@ -203,7 +225,7 @@ void Mips::etapa01()
     cout<<"ciclo 01"<<endl;
     IR = memoria[pc];
 
-    ALU(0, 1, 0);
+    ALU();
 
     // gambiarra
     MultiplexPc(ALUout);
@@ -213,7 +235,10 @@ void Mips::etapa01()
 
 void Mips::etapa02()
 {
+    cout<<"ciclo 02"<<endl;
+    uc.setSinalEtapa2();
     decodInstr(IR);
+    ALU();
 }
 
 /*

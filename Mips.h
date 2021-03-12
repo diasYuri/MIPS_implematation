@@ -45,9 +45,10 @@ class Mips
         void leTxt(string nometxt); 
         unsigned int binToDec(string bin, int len);
         void decodInstr(int instr);
-        void ALU(bool ALUSrcA, int ALUSrcB, int ALUOp);
+        void ALU();
         void MultiplexPc(int result);
         void buscaReg(int rs, int rt);
+        void SignExtension();
 
         void etapa01();
         void etapa02();

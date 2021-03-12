@@ -9,6 +9,7 @@ class uControl
         uControl();
         ~uControl();
         void setOpcode(int op);
+        void setSinalEtapa2();
 
         int getALUSrcB(){ return ALUSrcB; };
         int getALUOp(){ return ALUOp; };
@@ -18,7 +19,7 @@ class uControl
         bool getIorD(){ return IorD; };
         bool getMemRead(){ return MemRead; };
         bool getMemWrite(){ return MemWrite; };
-        bool getMemtoRed(){ return MemtoReg; }; //MemtoReg
+        bool getMemtoRed(){ return MemtoReg; }; 
         bool getIRWrite(){ return IRWrite; };
         bool getALUSrcA(){ return ALUSrcA; };
         bool getRegwrite(){ return RegWrite; };
@@ -30,6 +31,7 @@ class uControl
         int ALUSrcB, ALUOp, PCSource;
         bool PCWriteCond, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst;
 
+        void resetSinal()
 };
 
 #endif // UCONTROL_H
