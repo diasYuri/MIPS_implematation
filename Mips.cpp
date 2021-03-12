@@ -218,9 +218,9 @@ void Mips::Reg()
             store = ALUout;
 
         if(uc.getRegDst())
-            registers[rd] = store;
+            Registers[rd.to_ulong()] = store;
         else
-            registers[rt] = store;
+            Registers[rt.to_ulong()] = store;
     }
 
     else
@@ -319,6 +319,8 @@ void Mips::start()
     etapa02();
 
     etapa03();
+    etapa04();
+    etapa05();
 
     //while(pc<tamInst)
     {
@@ -367,15 +369,18 @@ void Mips::etapa03()
 
 
 
-/* void Mips::ciclo04()
+void Mips::etapa04()
 {
-    
+    cout<<"ciclo 04"<<endl;
+    uc.setSinalEtapa4();
+    MemoryData();
+
 }
- */
 
-/*
 
-void Mips::ciclo05()
+void Mips::etapa05()
 {
-
-}*/
+    cout<<"ciclo 05"<<endl;
+    uc.setSinalEtapa5();
+    Reg();
+}
