@@ -40,6 +40,7 @@ class Mips
         unsigned int IR;
         int ALUout;
         int MDR;
+        bool zeroALU;
 
 
         void leTxt(string nometxt); 
@@ -48,8 +49,9 @@ class Mips
         void ALU();
         void MultiplexPc(int result);
         void buscaReg(int rs, int rt);
-        void SignExtension();
+        int SignExtension();
         void MemoryData();
+        int controlALU();
 
         void etapa01();
         void etapa02();

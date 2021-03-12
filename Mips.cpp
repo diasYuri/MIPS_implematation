@@ -27,6 +27,49 @@ Mips::~Mips()
     delete [] memoria;
 }
 
+int Mips::controlALU()
+{
+    switch(uc.getALUOp())
+    {
+        case 0:
+            return 2;
+            break;
+        case 1:
+            return 6;
+            break;
+        case 2:
+            // Desconsiderando o bit mais significativo
+            bitset<5> funct;
+            funct = IR;
+            cout<<"campo funct: "<<funct<<endl;
+
+            switch(funct.to_ulong())
+            {
+                case 0:
+                    return 2;
+                    break;
+                case 2:
+                    return 6;
+                    break;
+                case 4:
+                    return 0;
+                    break;
+                case 5:
+                    return 1;
+                    break;
+                case 12:
+                    return 7;
+                    break;
+                default:
+                    cout<<"Error funct"<<endl;
+            }
+            break;
+    }
+    cout<<"Error alucontrol"<<endl;
+    return 0;
+} 
+
+
 void Mips::ALU()
 {
     int a, b, aluresult;
@@ -49,37 +92,46 @@ void Mips::ALU()
         //case 2:
             //b =  
         case 3:
-            SignExtension();
+            b = SignExtension();
             break;
         default:
             cout<<"error aluscrb"<<endl;
     }
 
     //ALUop
-    switch(uc.getALUOp())
+    switch(controlALU())
     {
-        case 0:
+        case 2:
             aluresult = a+b;
+            break;
+        case 6:
+            aluresult = a-b;
+            if(aluresult == 0)
+                zeroALU = true;
+            else
+                zeroALU = false;
+                //MultiplexPc(ALUout);
+            break;
+        case 0:
+            //and
             break;
         case 1:
-            aluresult = a+b;
+            //or
             break;
-        //case 2:
+        case 7:
+            //slt
+            aluresult = (a<b) ? 1:0;
+            break;
         default:
-            cout<<"error aluop"<<endl;
+            cout<<"error alu"<<endl;
     }
 
-
-    //ZeroALU
-    //
-    //
-    //
 
     ALUout = aluresult;
 
 }
 
-void Mips::SignExtension()
+int Mips::SignExtension()
 {
     bitset<16> res = IR;
     bitset<32> ext;
@@ -93,10 +145,12 @@ void Mips::SignExtension()
     }
     else
         convertido = res.to_ulong();
-    ext = convertido;
+    /* ext = convertido;
     cout<<res<<endl;
     cout<<convertido<<endl;
-    cout<<ext<<endl;
+    cout<<ext<<endl; */
+
+    return convertido;
 }
 
 
@@ -132,7 +186,9 @@ void Mips::MultiplexPc(int result)
         case 0:
             pc = result;
             break;
-        //case 1:
+        case 1:
+            pc = ALUout;
+            break;
 
         //case 2:
     }
@@ -231,6 +287,8 @@ void Mips::start()
     cout<<"pc: "<<pc<<endl;
     etapa02();
 
+    etapa03();
+
     //while(pc<tamInst)
     {
         //ciclo01();
@@ -261,17 +319,23 @@ void Mips::etapa01()
 void Mips::etapa02()
 {
     cout<<"ciclo 02"<<endl;
-   uc.setSinalEtapa2();
+    uc.setSinalEtapa2();
     decodInstr(IR);
     ALU();
+    cout<<ALUout<<endl;
 }
+
+
+
+void Mips::etapa03()
+{
+    cout<<"ciclo 03"<<endl;
+    uc.setSinalEtapa3();
+    int cnn = controlALU();
+}
+
 
 /*
-
-void Mips::ciclo03()
-{
-
-}
 
 void Mips::ciclo04()
 {

@@ -86,7 +86,7 @@ void uControl::setSinalEtapa3()
             ALUSrcA = 1;
             ALUSrcB = 0;
             ALUOp = 1;
-            PCWriteCond = 1;
+            PCWriteCond = 0;
             PCSource = 1;
             break;
         case 8:
