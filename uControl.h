@@ -22,7 +22,7 @@ class uControl
         bool getIorD(){ return IorD; };
         bool getMemRead(){ return MemRead; };
         bool getMemWrite(){ return MemWrite; };
-        bool getMemtoRed(){ return MemtoReg; }; 
+        bool getMemtoReg(){ return MemtoReg; }; 
         bool getIRWrite(){ return IRWrite; };
         bool getALUSrcA(){ return ALUSrcA; };
         bool getRegwrite(){ return RegWrite; };

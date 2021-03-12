@@ -87,7 +87,7 @@ void Mips::ALU()
             b = B;
             break;
         case 1:
-            b = 4;
+            b = 4/4;
             break;
         //case 2:
             //b =  
@@ -172,33 +172,64 @@ void Mips::MemoryData()
 
     if(uc.getMemRead())
     {
-        IR = memoria[add];
+        if(uc.getIRWrite())
+            IR = memoria[add];
+        MDR = memoria[add];
     }
 
 }
+
 
 
 void Mips::MultiplexPc(int result)
 {
 
-    switch(uc.getPCSource())
+    if(uc.getPCWrite() || (uc.getPCWriteCond() &&  zeroALU))
     {
-        case 0:
-            pc = result;
-            break;
-        case 1:
-            pc = ALUout;
-            break;
+        switch(uc.getPCSource())
+        {
+            case 0:
+                pc = result;
+                break;
+            case 1:
+                pc = ALUout;
+                break;
 
-        //case 2:
+            //case 2:
+        }
     }
 
 }
 
-void Mips::buscaReg(int rs, int rt)
+void Mips::Reg()
 {
-    A = Registers[rs];
-    B = Registers[rt];
+    bitset<5> rs, rt, rd;
+    rd = IR >> 11;
+    rt = IR >> 16;
+    rs = IR >> 21;
+
+    if(uc.getRegwrite())
+    {
+        int store;
+
+        if(uc.getMemtoReg())
+            store = MDR;
+        else
+            store = ALUout;
+
+        if(uc.getRegDst())
+            registers[rd] = store;
+        else
+            registers[rt] = store;
+    }
+
+    else
+    {
+        A = Registers[rs.to_ulong()];
+        B = Registers[rt.to_ulong()];
+    }
+ 
+
 }
 
 void Mips::decodInstr(int instr)
@@ -226,7 +257,7 @@ void Mips::decodInstr(int instr)
 
     // operações
     uc.setOpcode(opcode.to_ulong());
-    buscaReg(rs.to_ulong(), rt.to_ulong());
+    Reg();
 
 }
 
@@ -331,16 +362,18 @@ void Mips::etapa03()
 {
     cout<<"ciclo 03"<<endl;
     uc.setSinalEtapa3();
-    int cnn = controlALU();
+    ALU();
 }
 
+
+
+/* void Mips::ciclo04()
+{
+    
+}
+ */
 
 /*
-
-void Mips::ciclo04()
-{
-
-}
 
 void Mips::ciclo05()
 {

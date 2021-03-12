@@ -48,7 +48,7 @@ class Mips
         void decodInstr(int instr);
         void ALU();
         void MultiplexPc(int result);
-        void buscaReg(int rs, int rt);
+        void Reg();
         int SignExtension();
         void MemoryData();
         int controlALU();
