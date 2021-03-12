@@ -99,6 +99,31 @@ void Mips::SignExtension()
     cout<<ext<<endl;
 }
 
+
+void Mips::MemoryData()
+{
+    int add;
+
+    // Multiplexador
+    if(uc.getIorD())
+        add = ALUout;
+    else
+        add = pc;
+    ////////////////
+
+    if(uc.getMemWrite())
+    {
+        memoria[add] = B;
+    }
+
+    if(uc.getMemRead())
+    {
+        IR = memoria[add];
+    }
+
+}
+
+
 void Mips::MultiplexPc(int result)
 {
 
@@ -223,7 +248,7 @@ void Mips::start()
 void Mips::etapa01()
 {
     cout<<"ciclo 01"<<endl;
-    IR = memoria[pc];
+    MemoryData();
 
     ALU();
 
@@ -236,7 +261,7 @@ void Mips::etapa01()
 void Mips::etapa02()
 {
     cout<<"ciclo 02"<<endl;
-    uc.setSinalEtapa2();
+   uc.setSinalEtapa2();
     decodInstr(IR);
     ALU();
 }

@@ -49,6 +49,7 @@ class Mips
         void MultiplexPc(int result);
         void buscaReg(int rs, int rt);
         void SignExtension();
+        void MemoryData();
 
         void etapa01();
         void etapa02();

@@ -10,6 +10,9 @@ class uControl
         ~uControl();
         void setOpcode(int op);
         void setSinalEtapa2();
+        void setSinalEtapa3();
+        void setSinalEtapa4();
+        void setSinalEtapa5();
 
         int getALUSrcB(){ return ALUSrcB; };
         int getALUOp(){ return ALUOp; };
@@ -31,7 +34,7 @@ class uControl
         int ALUSrcB, ALUOp, PCSource;
         bool PCWriteCond, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst;
 
-        void resetSinal()
+       void resetSinal();
 };
 
 #endif // UCONTROL_H
