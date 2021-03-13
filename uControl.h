@@ -8,6 +8,7 @@ class uControl
     public:
         uControl();
         ~uControl();
+        bool isJal;
         void setOpcode(int op);
         void setSinalEtapa1();
         void setSinalEtapa2();

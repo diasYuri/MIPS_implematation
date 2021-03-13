@@ -67,12 +67,14 @@ void uControl::setSinalEtapa3()
             PCWrite = 1;
             PCSource = 2;
             state = 0;
+            isJal = 0;
             break;
         case 3:
             cout<<"jal"<<endl;
             PCWrite = 1;
             PCSource = 2;
             state = 0;
+            isJal = 1;
             break;
         case 4:
             cout<<"beq"<<endl;
@@ -101,14 +103,14 @@ void uControl::setSinalEtapa3()
         case 35:
             cout<<"lw"<<endl;
             ALUSrcA = 1;
-            ALUSrcB = 0;
-            ALUOp = 2;
+            ALUSrcB = 2;
+            ALUOp = 0;
             break;
         case 43:
             cout<<"sw"<<endl;
             ALUSrcA = 1;
-            ALUSrcB = 0;
-            ALUOp = 2;
+            ALUSrcB = 2;
+            ALUOp = 0;
             break;
         default:
             cout<<"opcode error"<<endl;

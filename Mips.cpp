@@ -112,7 +112,12 @@ void Mips::ALU()
                 zeroALU = true;
             else
                 zeroALU = false;
-            //MultiplexPc(ALUout);
+            
+
+            //testes
+
+
+            MultiplexPc(ALUout);
             break;
         case 0:
             //and
@@ -252,6 +257,9 @@ void Mips::Desvio()
         bitset<26> j = IR;
 
         int result = pcSig.to_ulong() + j.to_ulong();
+
+        if(uc.isJal)
+            Registers[31] = pc+1;
 
         MultiplexPc(result);
     }
