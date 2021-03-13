@@ -29,6 +29,7 @@ void uControl::resetSinal()
 
 void uControl::setSinalEtapa1()
 {
+    resetSinal();
     MemRead = 1;
     IRWrite = 1;
     IorD = 0;
@@ -83,6 +84,7 @@ void uControl::setSinalEtapa3()
             ALUOp = 1;
             PCWriteCond = 1;
             PCSource = 1;
+            isBNE = 0;
             state = 0;
             break;
         case 5:
@@ -92,6 +94,7 @@ void uControl::setSinalEtapa3()
             ALUOp = 1;
             PCWriteCond = 1;
             PCSource = 1;
+            isBNE = 1;
             state = 0;
             break;
         case 8:

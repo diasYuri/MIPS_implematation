@@ -9,6 +9,7 @@ class uControl
         uControl();
         ~uControl();
         bool isJal;
+        bool isBNE;
         void setOpcode(int op);
         void setSinalEtapa1();
         void setSinalEtapa2();

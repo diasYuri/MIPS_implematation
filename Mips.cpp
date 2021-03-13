@@ -38,7 +38,7 @@ int Mips::controlALU()
             return 6;
             break;
         case 2:
-            // Desconsiderando o bit mais significativo
+            // Desconsiderando o bit mais significativo do campo funct
             bitset<5> funct;
             funct = IR;
             cout<<"campo funct: "<<funct<<endl;
@@ -108,16 +108,14 @@ void Mips::ALU()
             break;
         case 6:
             aluresult = a-b;
-            if(aluresult == 0)
+            if(aluresult == 0 && !uc.isBNE)
+                zeroALU = true;
+            else if(aluresult != 0 && uc.isBNE)
                 zeroALU = true;
             else
                 zeroALU = false;
-            
 
-            //testes
-
-
-            MultiplexPc(ALUout);
+            setPC(ALUout);
             break;
         case 0:
             //and
@@ -144,7 +142,6 @@ int Mips::SignExtension()
 {
     bitset<16> res = IR;
     bitset<32> ext;
-    cout<<res<<endl;
 
     int convertido;
     if(res[15] == 1)
@@ -174,11 +171,6 @@ void Mips::MemoryData()
         add = pc;
     ////////////////
 
-    if(uc.getMemWrite())
-    {
-        memoria[add] = B;
-    }
-
     if(uc.getMemRead())
     {
         if(uc.getIRWrite())
@@ -186,11 +178,16 @@ void Mips::MemoryData()
         MDR = memoria[add];
     }
 
+    if(uc.getMemWrite())
+    {
+        memoria[add] = B;
+    }
+
 }
 
 
 
-void Mips::MultiplexPc(int result)
+void Mips::setPC(int result)
 {
 
     if(uc.getPCWrite() || (uc.getPCWriteCond() &&  zeroALU))
@@ -232,9 +229,9 @@ void Mips::Reg()
 
         cout<<"store: "<<ALUout<<endl;
 
-        if(uc.getRegDst())
+        if(uc.getRegDst() && rd.to_ulong() != 0)
             Registers[rd.to_ulong()] = store;
-        else
+        else if(rt.to_ulong() != 0)
             Registers[rt.to_ulong()] = store;
     }
 
@@ -261,7 +258,7 @@ void Mips::Desvio()
         if(uc.isJal)
             Registers[31] = pc+1;
 
-        MultiplexPc(result);
+        setPC(result);
     }
 }
 
@@ -302,6 +299,7 @@ void Mips::leTxt(string nometxt)
     char *result;
     int i;
     string bin;
+    bitset<32> tests;
 
     nometxt += ".txt";
     const char * c = nometxt.c_str();
@@ -322,7 +320,6 @@ void Mips::leTxt(string nometxt)
             result = fgets(linha, 64, arq);
             if (result)
                 {
-                    //cout<<"resultado: "<<tamInst<<endl;
                     bin = result;
                     memoria[tamInst] = binToDec(bin, 32);
                     tamInst++;
@@ -340,6 +337,7 @@ void Mips::start()
     cout<<"Digite o nome do arquivo: ";
     getline(cin, nometxt);
     leTxt(nometxt);
+
 
     
     while(pc<tamInst)
@@ -361,11 +359,6 @@ void Mips::start()
 
         etapa05();  
 
-
-        /* for(int i=0; i<32; i++)
-        {
-            cout<<"register: "<<Registers[i]<<endl;
-        } */
 
 
         cout<<"$s0: "<<Registers[16]<<endl;
@@ -397,8 +390,7 @@ void Mips::etapa01()
 
     ALU();
     
-    // gambiarra
-    MultiplexPc(ALUout);
+    setPC(ALUout);
 }
 
 

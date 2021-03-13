@@ -47,7 +47,7 @@ class Mips
         unsigned int binToDec(string bin, int len);
         void decodInstr(int instr);
         void ALU();
-        void MultiplexPc(int result);
+        void setPC(int result);
         void Reg();
         int SignExtension();
         void MemoryData();
