@@ -52,6 +52,7 @@ class Mips
         int SignExtension();
         void MemoryData();
         int controlALU();
+        void Desvio();
 
         void etapa01();
         void etapa02();

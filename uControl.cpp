@@ -14,6 +14,8 @@ uControl::uControl()
     ALUSrcB = 1;
     ALUOp = 0;
     PCSource = 0;
+
+    state = 1;
 }
 
 uControl::~uControl()
@@ -29,24 +31,16 @@ void uControl::setOpcode(int op)
 
 void uControl::resetSinal()
 {
-    ALUSrcB = 1;
-    PCSource = 1;
-    PCWriteCond = 1;
-    PCWrite = 1;
-    IorD = 1;
-    MemRead = 1;
-    MemWrite = 1;
-    MemtoReg = 1;
-    IRWrite = 1;
-    ALUSrcA = 1;
-    RegWrite = 1;
-    RegDst = 1;
+    PCWrite = 0;
+    MemWrite = 0;
+    IRWrite = 0;
+    RegWrite = 0;
 }
 
 
 void uControl::setSinalEtapa2()
 {
-    //resetSinal();
+    resetSinal();
     ALUSrcA = 0;
     ALUSrcB = 3;
     ALUOp = 0;
@@ -55,6 +49,7 @@ void uControl::setSinalEtapa2()
 
 void uControl::setSinalEtapa3()
 {
+    resetSinal();
     switch(opcode)
     {
         case 0:
@@ -67,11 +62,13 @@ void uControl::setSinalEtapa3()
             cout<<"j"<<endl;
             PCWrite = 1;
             PCSource = 2;
+            state = 0;
             break;
         case 3:
             cout<<"jal"<<endl;
             PCWrite = 1;
             PCSource = 2;
+            state = 0;
             break;
         case 4:
             cout<<"beq"<<endl;
@@ -80,6 +77,7 @@ void uControl::setSinalEtapa3()
             ALUOp = 1;
             PCWriteCond = 1;
             PCSource = 1;
+            state = 0;
             break;
         case 5:
             cout<<"bne"<<endl;
@@ -88,9 +86,13 @@ void uControl::setSinalEtapa3()
             ALUOp = 1;
             PCWriteCond = 1;
             PCSource = 1;
+            state = 0;
             break;
         case 8:
             cout<<"add immediate"<<endl;
+            ALUSrcA = 1;
+            ALUSrcB = 2;
+            ALUOp = 0;
             break;
         case 35:
             cout<<"lw"<<endl;
@@ -113,6 +115,7 @@ void uControl::setSinalEtapa3()
 
 void uControl::setSinalEtapa4()
 {
+    resetSinal();
     switch(opcode)
     {
         case 0:
@@ -120,9 +123,14 @@ void uControl::setSinalEtapa4()
             RegDst = 1;
             RegWrite = 1;
             MemtoReg = 0;
+            state = 0;
             break;
         case 8:
             cout<<"add immediate"<<endl;
+            RegDst = 0;
+            RegWrite = 1;
+            MemtoReg = 0;
+            state = 0;
             break;
         case 35:
             cout<<"lw"<<endl;
@@ -133,6 +141,7 @@ void uControl::setSinalEtapa4()
             cout<<"sw"<<endl;
             MemWrite = 1;
             IorD = 1;
+            state = 0;
             break;
         default:
             cout<<"opcode error"<<endl;
@@ -143,11 +152,13 @@ void uControl::setSinalEtapa4()
 
 void uControl::setSinalEtapa5()
 {
+    resetSinal();
     if(opcode == 35){
         cout<<"lw"<<endl;
         RegDst = 0;
         RegWrite = 1;
         MemtoReg = 1;
+        state = 0;
     }
     else
         cout<<"opcode error"<<endl;

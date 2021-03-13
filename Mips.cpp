@@ -19,7 +19,7 @@ Mips::Mips()
     tamInst = 0;
 
     for(int i=0; i<32; i++)
-        Registers[i] = i;
+        Registers[i] = 0;
 }
 
 Mips::~Mips()
@@ -81,6 +81,8 @@ void Mips::ALU()
     else
         a = pc;
 
+    cout<<"a:"<<A<<endl;
+
     switch(uc.getALUSrcB())
     {  
         case 0:
@@ -89,8 +91,10 @@ void Mips::ALU()
         case 1:
             b = 4/4;
             break;
-        //case 2:
-            //b =  
+        case 2:
+            b = SignExtension();
+            cout<<"b: "<<b<<endl;
+            break; 
         case 3:
             b = SignExtension();
             break;
@@ -110,13 +114,23 @@ void Mips::ALU()
                 zeroALU = true;
             else
                 zeroALU = false;
-                //MultiplexPc(ALUout);
+            //MultiplexPc(ALUout);
             break;
         case 0:
             //and
+            /* bitset<32> testA = a;
+            bitset<32> testB = b;
+
+            testA = testA & testB;
+            aluresult = testA.to_ulong() */;
             break;
         case 1:
             //or
+            /* bitset<32> testA = a;
+            bitset<32> testB = b;
+
+            testA = testA | testB;
+            aluresult = testA.to_ulong(); */
             break;
         case 7:
             //slt
@@ -194,8 +208,9 @@ void Mips::MultiplexPc(int result)
             case 1:
                 pc = ALUout;
                 break;
-
-            //case 2:
+            case 2:
+                pc = result;
+                break;
         }
     }
 
@@ -204,9 +219,12 @@ void Mips::MultiplexPc(int result)
 void Mips::Reg()
 {
     bitset<5> rs, rt, rd;
+
     rd = IR >> 11;
     rt = IR >> 16;
     rs = IR >> 21;
+
+    cout<<"rt: "<<rt<<endl;
 
     if(uc.getRegwrite())
     {
@@ -217,19 +235,36 @@ void Mips::Reg()
         else
             store = ALUout;
 
+        cout<<"store: "<<ALUout<<endl;
+
         if(uc.getRegDst())
             Registers[rd.to_ulong()] = store;
         else
             Registers[rt.to_ulong()] = store;
     }
 
-    else
+    if(uc.getMemRead())
     {
         A = Registers[rs.to_ulong()];
         B = Registers[rt.to_ulong()];
     }
  
 
+}
+
+void Mips::Desvio()
+{
+    if(uc.getPCWrite())
+    {
+        bitset <32> pcSig = pc>>28;
+        pcSig = pcSig<<28;
+
+        bitset<26> j = IR;
+
+        int result = pcSig.to_ulong() + j.to_ulong();
+
+        MultiplexPc(result);
+    }
 }
 
 void Mips::decodInstr(int instr)
@@ -316,11 +351,20 @@ void Mips::start()
 
     etapa01();
     cout<<"pc: "<<pc<<endl;
+    cout<<endl;
     etapa02();
-
+    cout<<endl;
     etapa03();
+    cout<<endl;
     etapa04();
-    etapa05();
+    cout<<endl;
+    //etapa05();
+
+
+    for(int i=0; i<32; i++)
+    {
+        cout<<"register: "<<Registers[i]<<endl;
+    }
 
     //while(pc<tamInst)
     {
@@ -342,7 +386,7 @@ void Mips::etapa01()
     MemoryData();
 
     ALU();
-
+    
     // gambiarra
     MultiplexPc(ALUout);
 }
@@ -355,26 +399,36 @@ void Mips::etapa02()
     uc.setSinalEtapa2();
     decodInstr(IR);
     ALU();
-    cout<<ALUout<<endl;
 }
 
 
 
 void Mips::etapa03()
 {
-    cout<<"ciclo 03"<<endl;
-    uc.setSinalEtapa3();
-    ALU();
+    if(uc.getState())
+    {
+        cout<<"ciclo 03"<<endl;
+        uc.setSinalEtapa3();
+        Desvio();
+        ALU();
+    }  
 }
 
 
 
 void Mips::etapa04()
 {
-    cout<<"ciclo 04"<<endl;
-    uc.setSinalEtapa4();
-    MemoryData();
+    if(uc.getState())
+    {
+        cout<<"ciclo 04"<<endl;
+        uc.setSinalEtapa4();
 
+        if(uc.getRegwrite())
+            Reg();
+        
+        if(uc.getMemWrite())
+            MemoryData();
+    }
 }
 
 

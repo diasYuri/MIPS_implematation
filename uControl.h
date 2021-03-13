@@ -27,12 +27,14 @@ class uControl
         bool getALUSrcA(){ return ALUSrcA; };
         bool getRegwrite(){ return RegWrite; };
         bool getRegDst(){ return RegDst; };
+        bool getState(){ return state; };
 
 
     private:
         int opcode;
         int ALUSrcB, ALUOp, PCSource;
         bool PCWriteCond, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst;
+        bool state;
 
        void resetSinal();
 };
