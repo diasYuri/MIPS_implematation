@@ -9,6 +9,7 @@ class uControl
         uControl();
         ~uControl();
         void setOpcode(int op);
+        void setSinalEtapa1();
         void setSinalEtapa2();
         void setSinalEtapa3();
         void setSinalEtapa4();

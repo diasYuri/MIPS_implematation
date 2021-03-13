@@ -57,7 +57,7 @@ int Mips::controlALU()
                 case 5:
                     return 1;
                     break;
-                case 12:
+                case 10:
                     return 7;
                     break;
                 default:
@@ -81,7 +81,6 @@ void Mips::ALU()
     else
         a = pc;
 
-    cout<<"a:"<<A<<endl;
 
     switch(uc.getALUSrcB())
     {  
@@ -93,7 +92,6 @@ void Mips::ALU()
             break;
         case 2:
             b = SignExtension();
-            cout<<"b: "<<b<<endl;
             break; 
         case 3:
             b = SignExtension();
@@ -118,19 +116,11 @@ void Mips::ALU()
             break;
         case 0:
             //and
-            /* bitset<32> testA = a;
-            bitset<32> testB = b;
-
-            testA = testA & testB;
-            aluresult = testA.to_ulong() */;
+            aluresult = a & b;
             break;
         case 1:
             //or
-            /* bitset<32> testA = a;
-            bitset<32> testB = b;
-
-            testA = testA | testB;
-            aluresult = testA.to_ulong(); */
+            aluresult = a | b;
             break;
         case 7:
             //slt
@@ -332,12 +322,6 @@ void Mips::leTxt(string nometxt)
             i++;
         }
 
-        for(int i=0; i<tamInst; i++)
-        {
-            cout<<memoria[i]<<endl;
-        }
-
-
 
     fclose(arq);
 }
@@ -349,31 +333,47 @@ void Mips::start()
     getline(cin, nometxt);
     leTxt(nometxt);
 
-    etapa01();
-    cout<<"pc: "<<pc<<endl;
-    cout<<endl;
-    etapa02();
-    cout<<endl;
-    etapa03();
-    cout<<endl;
-    etapa04();
-    cout<<endl;
-    //etapa05();
-
-
-    for(int i=0; i<32; i++)
+    
+    while(pc<tamInst)
     {
-        cout<<"register: "<<Registers[i]<<endl;
+        cout<<"----------- ETAPA "<<pc+1<<" -----------"<<endl;
+
+
+        etapa01();
+
+        cout<<endl;
+        etapa02();
+
+        cout<<endl;
+        etapa03();
+        cout<<endl;
+
+        etapa04();
+        cout<<endl;
+
+        etapa05();  
+
+
+        /* for(int i=0; i<32; i++)
+        {
+            cout<<"register: "<<Registers[i]<<endl;
+        } */
+
+
+        cout<<"$s0: "<<Registers[16]<<endl;
+        cout<<"$s1: "<<Registers[17]<<endl;
+        cout<<"$s2: "<<Registers[18]<<endl;
+        cout<<"$s3: "<<Registers[19]<<endl;
+        cout<<endl;
+        cout<<"$t0: "<<Registers[8]<<endl;
+        cout<<"$t1: "<<Registers[9]<<endl;
+        cout<<"$t2: "<<Registers[10]<<endl;
+        cout<<"$t3: "<<Registers[11]<<endl;
     }
 
-    //while(pc<tamInst)
-    {
-        //ciclo01();
-        //ciclo02();
-        //ciclo03();
-        //ciclo04();
-        //ciclo05();  
-    }
+
+    
+
 
 
 
@@ -383,6 +383,8 @@ void Mips::start()
 void Mips::etapa01()
 {
     cout<<"ciclo 01"<<endl;
+    cout<<"PC: "<<pc<<endl;
+    uc.setSinalEtapa1();
     MemoryData();
 
     ALU();
@@ -434,7 +436,10 @@ void Mips::etapa04()
 
 void Mips::etapa05()
 {
-    cout<<"ciclo 05"<<endl;
-    uc.setSinalEtapa5();
-    Reg();
+    if(uc.getState())
+    {
+        cout<<"ciclo 05"<<endl;
+        uc.setSinalEtapa5();
+        Reg();
+    }
 }

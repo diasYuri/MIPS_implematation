@@ -17,9 +17,7 @@ int main()
 
 
     Mips test;
-    test.start();
-
- 
+    test.start(); 
 
 
 

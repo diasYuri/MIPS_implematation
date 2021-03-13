@@ -5,17 +5,6 @@ using namespace std;
 
 uControl::uControl()
 {
-    MemRead = 1;
-    IRWrite = 1;
-    IorD = 0;
-    ALUSrcA = 0;
-    PCWrite = 1;
-
-    ALUSrcB = 1;
-    ALUOp = 0;
-    PCSource = 0;
-
-    state = 1;
 }
 
 uControl::~uControl()
@@ -37,6 +26,21 @@ void uControl::resetSinal()
     RegWrite = 0;
 }
 
+
+void uControl::setSinalEtapa1()
+{
+    MemRead = 1;
+    IRWrite = 1;
+    IorD = 0;
+    ALUSrcA = 0;
+    PCWrite = 1;
+
+    ALUSrcB = 1;
+    ALUOp = 0;
+    PCSource = 0;
+
+    state = 1;
+}
 
 void uControl::setSinalEtapa2()
 {
