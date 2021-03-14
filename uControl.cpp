@@ -52,33 +52,46 @@ void uControl::setSinalEtapa2()
 }
 
 
-void uControl::setSinalEtapa3()
+void uControl::setSinalEtapa3(FILE *arq)
 {
     resetSinal();
     switch(opcode)
     {
         case 0:
-            cout<<"type r"<<endl;
+            cout<<"Tipo de instrução: type r"<<endl;
+            cout<<"Execusao ALU"<<endl;
+            fprintf(arq,"Tipo de instrução: type r\nExecusao ALU\n");
             ALUSrcA = 1;
             ALUSrcB = 0;
             ALUOp = 2;
             break;
         case 2:
-            cout<<"j"<<endl;
+            cout<<"Tipo de instrução: j"<<endl;
+            cout<<"Conclusao de desvio"<<endl;
+            fprintf(arq,"Tipo de instrução: j\nConclusao de desvio\n");
+
             PCWrite = 1;
             PCSource = 2;
             state = 0;
             isJal = 0;
             break;
         case 3:
-            cout<<"jal"<<endl;
+            cout<<"Tipo de instrução: jal"<<endl;
+            cout<<"Conclusao de desvio"<<endl;
+            fprintf(arq,"Tipo de instrução: jal\nConclusao de desvio\n");
+
+
             PCWrite = 1;
             PCSource = 2;
             state = 0;
             isJal = 1;
             break;
         case 4:
-            cout<<"beq"<<endl;
+            cout<<"Tipo de instrução: beq"<<endl;
+            cout<<"Conclusao de desvio"<<endl;
+            fprintf(arq,"Tipo de instrução: beq\nConclusao de desvio\n");
+
+
             ALUSrcA = 1;
             ALUSrcB = 0;
             ALUOp = 1;
@@ -88,7 +101,11 @@ void uControl::setSinalEtapa3()
             state = 0;
             break;
         case 5:
-            cout<<"bne"<<endl;
+            cout<<"Tipo de instrução: bne"<<endl;
+            cout<<"Conclusao de desvio"<<endl;
+            fprintf(arq,"Tipo de instrução: bne\nConclusao de desvio\n");
+
+
             ALUSrcA = 1;
             ALUSrcB = 0;
             ALUOp = 1;
@@ -98,19 +115,31 @@ void uControl::setSinalEtapa3()
             state = 0;
             break;
         case 8:
-            cout<<"add immediate"<<endl;
+            cout<<"Tipo de instrução: add immediate"<<endl;
+            cout<<"Execusao ALU"<<endl;
+            fprintf(arq,"Tipo de instrução: add immediate\nExecusao ALU\n");
+
+
             ALUSrcA = 1;
             ALUSrcB = 2;
             ALUOp = 0;
             break;
         case 35:
-            cout<<"lw"<<endl;
+            cout<<"Tipo de instrução: lw"<<endl;
+            cout<<"Cálculo do endereço de memória na ALU"<<endl;
+            fprintf(arq,"Tipo de instrução: lw\nCálculo do endereço de memória na ALU\n");
+
+            
             ALUSrcA = 1;
             ALUSrcB = 2;
             ALUOp = 0;
             break;
         case 43:
-            cout<<"sw"<<endl;
+            cout<<"Tipo de instrução: sw"<<endl;
+            cout<<"Cálculo do endereço de memória na ALU"<<endl;
+            fprintf(arq,"Tipo de instrução: sw\nCálculo do endereço de memória na ALU\n");
+
+
             ALUSrcA = 1;
             ALUSrcB = 2;
             ALUOp = 0;
@@ -122,32 +151,39 @@ void uControl::setSinalEtapa3()
 }
 
 
-void uControl::setSinalEtapa4()
+void uControl::setSinalEtapa4(FILE *arq)
 {
     resetSinal();
     switch(opcode)
     {
         case 0:
-            cout<<"type r"<<endl;
+            cout<<"Escrita no Banco de Registradores"<<endl;
+            fprintf(arq,"Escrita no Banco de Registradores\n");
             RegDst = 1;
             RegWrite = 1;
             MemtoReg = 0;
             state = 0;
             break;
         case 8:
-            cout<<"add immediate"<<endl;
+            cout<<"Escrita no Banco de Registradores"<<endl;
+            fprintf(arq,"Escrita no Banco de Registradores\n");
+
             RegDst = 0;
             RegWrite = 1;
             MemtoReg = 0;
             state = 0;
             break;
         case 35:
-            cout<<"lw"<<endl;
+            cout<<"Leitura da Memoria"<<endl;
+            fprintf(arq,"Leitura da Memoria\n");
+
             MemRead = 1;
             IorD = 1;
             break;
         case 43:
-            cout<<"sw"<<endl;
+            cout<<"Escrita na Memoria"<<endl;
+            fprintf(arq,"Escrita na Memoria\n");
+
             MemWrite = 1;
             IorD = 1;
             state = 0;
@@ -159,11 +195,13 @@ void uControl::setSinalEtapa4()
 }
 
 
-void uControl::setSinalEtapa5()
+void uControl::setSinalEtapa5(FILE *arq)
 {
     resetSinal();
     if(opcode == 35){
-        cout<<"lw"<<endl;
+        cout<<"Escrita no Banco de Registradores"<<endl;
+        fprintf(arq,"Escrita no Banco de Registradores\n");
+
         RegDst = 0;
         RegWrite = 1;
         MemtoReg = 1;

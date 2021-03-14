@@ -16,6 +16,7 @@ int main()
     Mips mips;
     bool stop = 0;
     string opcao, nometxt, instr;
+    int op;
 
     while(!stop)
     {
@@ -29,7 +30,17 @@ int main()
             cout<<endl;
             cout<<"Digite o nome do arquivo sem a extensao: ";
             getline(cin, nometxt);
-            mips.start(1, nometxt);
+
+            cout<<endl;
+            cout<<"Deseja executar passo a passo[1] ou direto[2]: ";
+            getline(cin, opcao);
+            if(opcao == "1")
+                op = 1;
+            else
+                op = 2;
+
+
+            mips.start(1, op, nometxt);
         }
         else if(opcao == "b")
         {
@@ -37,7 +48,16 @@ int main()
             cout<<"Digite a instrucao"<<endl;
             cout<<">> ";
             getline(cin, instr);
-            mips.start(2, instr);
+
+            cout<<endl;
+            cout<<"Deseja executar passo a passo[1] ou direto[2]: ";
+            getline(cin, opcao);
+            if(opcao == "1")
+                op = 1;
+            else
+                op = 2;
+
+            mips.start(2, op, instr);
         }
         else
         {

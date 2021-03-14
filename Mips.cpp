@@ -91,7 +91,7 @@ int Mips::controlALU()
 void Mips::ALU()
 {
     int a, b, aluresult;
-    cout<<"ALU ok"<<endl;
+
 
     //Multiplexadores
     if(uc.getALUSrcA())
@@ -233,7 +233,6 @@ void Mips::Reg()
     rt = IR >> 16;
     rs = IR >> 21;
 
-    cout<<"rt: "<<rt<<endl;
 
     if(uc.getRegwrite())
     {
@@ -244,7 +243,7 @@ void Mips::Reg()
         else
             store = ALUout;
 
-        cout<<"store: "<<ALUout<<endl;
+        //cout<<"store: "<<ALUout<<endl;
 
         if(uc.getRegDst() && rd.to_ulong() != 0)
             Registers[rd.to_ulong()] = store;
@@ -282,22 +281,8 @@ void Mips::Desvio()
 void Mips::decodInstr(int instr)
 {
     bitset<32> binInstr;
-    bitset<26> address;
-    bitset<16> immediate;
-    bitset<6> opcode, funct;
-    bitset<5> rs, rt, rd, shamt;
+    bitset<6> opcode;
 
-    //binInstr = instr;
-    //cout<<binInstr<<endl;
-    // 1000 0000 0001 1010 1010 1010 1110 1011
-
-    address = instr;
-    immediate = instr;
-    funct = instr;
-    shamt = instr >> 6;
-    rd = instr >> 11;
-    rt = instr >> 16;
-    rs = instr >> 21;
 
     //opcode
     opcode = instr >> 26;
@@ -349,19 +334,39 @@ void Mips::leTxt(string nometxt)
     fclose(arq);
 }
 
-void Mips::geraTxt(string text)
+void Mips::geraTxt()
 {
-    char Str[100];
-    const char * c = text.c_str();
-    
-    strcpy(Str, c);
-    int result = fputs(Str, arq);
-    if (result == EOF)
-        printf("Erro na Gravacao\n");
+    fprintf(arq,"$s0: %d\n", Registers[16]);
+    fprintf(arq,"$s1: %d\n", Registers[17]);
+    fprintf(arq,"$s2: %d\n", Registers[18]);
+    fprintf(arq,"$s3: %d\n", Registers[19]);
+    fprintf(arq,"$s4: %d\n", Registers[20]);
+    fprintf(arq,"$s5: %d\n", Registers[21]);
+    fprintf(arq,"$s6: %d\n", Registers[22]);
+    fprintf(arq,"$s7: %d\n\n", Registers[23]);
+
+    fprintf(arq,"$t0: %d\n", Registers[8]);
+    fprintf(arq,"$t1: %d\n", Registers[9]);
+    fprintf(arq,"$t2: %d\n", Registers[10]);
+    fprintf(arq,"$t3: %d\n", Registers[11]);
+    fprintf(arq,"$t4: %d\n", Registers[12]);
+    fprintf(arq,"$t5: %d\n", Registers[13]);
+    fprintf(arq,"$t6: %d\n", Registers[14]);
+    fprintf(arq,"$t7: %d\n", Registers[15]);
+    fprintf(arq,"$t8: %d\n", Registers[24]);
+    fprintf(arq,"$t9: %d\n\n", Registers[25]);
+
+
+    fprintf(arq,"Memoria de dados\n");
+    for(int i=EspReservado; i<256; i++)
+    {
+        if(memoria[i] != 0)
+            fprintf(arq,"Memoria[%d]: %d\n",i ,memoria[i]);
+    }
 
 }
 
-void Mips::start(int tipo, string nometxt)
+void Mips::start(int tipo, int opcao, string nometxt)
 {
     string s;
     if(tipo == 1)
@@ -377,7 +382,7 @@ void Mips::start(int tipo, string nometxt)
     while(pc<tamInst)
     {
         cout<<"----------- INSTRUCAO "<<pc+1<<" -----------"<<endl;
-        fprintf(arq,"----------- INSTRUCAO %d -----------\n",pc+1);
+        fprintf(arq,"\n\n----------- INSTRUCAO %d -----------\n\n",pc+1);
 
         etapa01();
         cout<<endl;
@@ -389,7 +394,8 @@ void Mips::start(int tipo, string nometxt)
         cout<<endl;
         etapa05();  
 
-
+        cout<<"Banco de Registradores"<<endl;
+        fprintf(arq,"Banco de Registradores\n");
 
         cout<<"$s0: "<<Registers[16]<<endl;
         cout<<"$s1: "<<Registers[17]<<endl;
@@ -411,10 +417,17 @@ void Mips::start(int tipo, string nometxt)
         cout<<"$t8: "<<Registers[24]<<endl;
         cout<<"$t8: "<<Registers[25]<<endl;
 
+        
+        geraTxt();
         cout<<endl;
-        cout<<"Aperte ENTER para continuar"<<endl;
-        cout<<">> ";
-        getline(cin, s);
+        
+
+        if(opcao == 1)
+        {
+            cout<<"Aperte ENTER para continuar"<<endl;
+            cout<<">> ";
+            getline(cin, s);
+        }
     }
 
 }
@@ -422,14 +435,20 @@ void Mips::start(int tipo, string nometxt)
 
 void Mips::etapa01()
 {
-    ciclo++;
-    cout<<"ciclo 01"<<endl;
-    cout<<"PC: "<<pc<<endl;
     uc.setSinalEtapa1();
-    MemoryData();
 
-    ALU();
+    ciclo++;
+    cout<<"Busca da instrucao"<<endl;
+    cout<<"ciclo: "<<ciclo<<endl;
+    cout<<"PC: "<<pc<<endl;
+
+    fprintf(arq,"Busca da instrucao\n");
+    fprintf(arq,"ciclo: %d\n", ciclo);
+    fprintf(arq,"PC: %d\n\n\n", pc);
+
     
+    MemoryData();
+    ALU();
     setPC(ALUout);
 }
 
@@ -437,8 +456,17 @@ void Mips::etapa01()
 
 void Mips::etapa02()
 {
-    cout<<"ciclo 02"<<endl;
     uc.setSinalEtapa2();
+
+    ciclo++;
+    cout<<"Decodificação da instrução e busca dos registradores"<<endl;
+    cout<<"ciclo: "<<ciclo<<endl;
+    cout<<"PC: "<<pc<<endl;
+
+    fprintf(arq,"Decodificação da instrução e busca dos registradores\n");
+    fprintf(arq,"ciclo: %d\n", ciclo);
+    fprintf(arq,"PC: %d\n\n\n", pc);
+   
     decodInstr(IR);
     ALU();
 }
@@ -449,8 +477,14 @@ void Mips::etapa03()
 {
     if(uc.getState())
     {
-        cout<<"ciclo 03"<<endl;
-        uc.setSinalEtapa3();
+        uc.setSinalEtapa3(arq);
+        ciclo++;
+        cout<<"ciclo: "<<ciclo<<endl;
+        cout<<"PC: "<<pc<<endl;
+        
+        fprintf(arq,"ciclo: %d\n", ciclo);
+        fprintf(arq,"PC: %d\n\n\n", pc);
+
         Desvio();
         ALU();
     }  
@@ -462,8 +496,14 @@ void Mips::etapa04()
 {
     if(uc.getState())
     {
-        cout<<"ciclo 04"<<endl;
-        uc.setSinalEtapa4();
+        uc.setSinalEtapa4(arq);
+        ciclo++;
+        cout<<"ciclo: "<<ciclo<<endl;
+        cout<<"PC: "<<pc<<endl;
+        
+    
+        fprintf(arq,"ciclo: %d\n", ciclo);
+        fprintf(arq,"PC: %d\n\n\n", pc);
 
         if(uc.getRegwrite())
             Reg();
@@ -478,8 +518,15 @@ void Mips::etapa05()
 {
     if(uc.getState())
     {
-        cout<<"ciclo 05"<<endl;
-        uc.setSinalEtapa5();
+        uc.setSinalEtapa5(arq);
+        ciclo++;
+        cout<<"ciclo: "<<ciclo<<endl;
+        cout<<"PC: "<<pc<<endl;
+        
+        
+        fprintf(arq,"ciclo: %d\n", ciclo);
+        fprintf(arq,"PC: %d\n\n\n", pc);
+
         Reg();
     }
 }

@@ -13,9 +13,9 @@ class uControl
         void setOpcode(int op);
         void setSinalEtapa1();
         void setSinalEtapa2();
-        void setSinalEtapa3();
-        void setSinalEtapa4();
-        void setSinalEtapa5();
+        void setSinalEtapa3(FILE *arq);
+        void setSinalEtapa4(FILE *arq);
+        void setSinalEtapa5(FILE *arq);
 
         int getALUSrcB(){ return ALUSrcB; };
         int getALUOp(){ return ALUOp; };

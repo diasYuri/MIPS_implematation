@@ -16,7 +16,7 @@ class Mips
         Mips();
         ~Mips();
 
-        void start(int tipo, string nometxt);
+        void start(int tipo, int opcao, string nometxt);
         void reset();
 
 
@@ -59,7 +59,7 @@ class Mips
         void MemoryData();
         int controlALU();
         void Desvio();
-        void geraTxt(string text);
+        void geraTxt();
 
         void etapa01();
         void etapa02();
