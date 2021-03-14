@@ -356,6 +356,14 @@ void Mips::geraTxt()
     fprintf(arq,"$t8: %d\n", Registers[24]);
     fprintf(arq,"$t9: %d\n\n", Registers[25]);
 
+    fprintf(arq,"$v0: %d\n", Registers[2]);
+    fprintf(arq,"$v1: %d\n", Registers[3]);
+    fprintf(arq,"$a0: %d\n", Registers[4]);
+    fprintf(arq,"$a1: %d\n", Registers[5]);
+    fprintf(arq,"$a2: %d\n", Registers[6]);
+    fprintf(arq,"$a3: %d\n", Registers[7]);
+    fprintf(arq,"$ra: %d\n\n", Registers[31]);
+
 
     fprintf(arq,"Memoria de dados\n");
     for(int i=EspReservado; i<256; i++)
@@ -416,6 +424,14 @@ void Mips::start(int tipo, int opcao, string nometxt)
         cout<<"$t7: "<<Registers[15]<<endl;
         cout<<"$t8: "<<Registers[24]<<endl;
         cout<<"$t8: "<<Registers[25]<<endl;
+        cout<<endl;
+        cout<<"$v0: "<<Registers[2]<<endl;
+        cout<<"$v1: "<<Registers[3]<<endl;
+        cout<<"$a0: "<<Registers[4]<<endl;
+        cout<<"$a1: "<<Registers[5]<<endl;
+        cout<<"$a2: "<<Registers[6]<<endl;
+        cout<<"$a3: "<<Registers[7]<<endl;
+        cout<<"$ra: "<<Registers[31]<<endl;
 
         
         geraTxt();
