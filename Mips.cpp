@@ -7,11 +7,18 @@ Mips::Mips()
 {
     cout<<"Mips iniciado"<<endl;
     reset();
+
+    arq = fopen("ArqGrav.txt", "wt");  // Cria um arquivo texto para gravação
+    if (arq == NULL) // Se não conseguiu criar
+    {
+        printf("Problemas na CRIACAO do arquivo\n");
+        return;
+    }
 }
 
 Mips::~Mips()
 {
-    delete [] memoria;
+    fclose(arq);
 }
 
 unsigned int Mips::binToDec(string bin, int len)
@@ -29,12 +36,13 @@ void Mips::reset()
 {
     tamInst = 0;
     pc = 0;
+    ciclo = 0;
     EspReservado = 64;
 
     for(int i=0; i<32; i++)
         Registers[i] = 0;
     //&sp
-    Registers[28] = 256;
+    Registers[29] = 256;
 }
 
 int Mips::controlALU()
@@ -308,7 +316,6 @@ void Mips::leTxt(string nometxt)
     char *result;
     int i;
     string bin;
-    bitset<32> tests;
 
     nometxt += ".txt";
     const char * c = nometxt.c_str();
@@ -342,9 +349,21 @@ void Mips::leTxt(string nometxt)
     fclose(arq);
 }
 
+void Mips::geraTxt(string text)
+{
+    char Str[100];
+    const char * c = text.c_str();
+    
+    strcpy(Str, c);
+    int result = fputs(Str, arq);
+    if (result == EOF)
+        printf("Erro na Gravacao\n");
+
+}
+
 void Mips::start(int tipo, string nometxt)
 {
-
+    string s;
     if(tipo == 1)
         leTxt(nometxt);
     else if(tipo == 2)
@@ -353,12 +372,12 @@ void Mips::start(int tipo, string nometxt)
         tamInst++;
     }
     
-
+    
     
     while(pc<tamInst)
     {
         cout<<"----------- INSTRUCAO "<<pc+1<<" -----------"<<endl;
-
+        fprintf(arq,"----------- INSTRUCAO %d -----------\n",pc+1);
 
         etapa01();
         cout<<endl;
@@ -376,24 +395,34 @@ void Mips::start(int tipo, string nometxt)
         cout<<"$s1: "<<Registers[17]<<endl;
         cout<<"$s2: "<<Registers[18]<<endl;
         cout<<"$s3: "<<Registers[19]<<endl;
+        cout<<"$s4: "<<Registers[20]<<endl;
+        cout<<"$s5: "<<Registers[21]<<endl;
+        cout<<"$s6: "<<Registers[22]<<endl;
+        cout<<"$s7: "<<Registers[23]<<endl;
         cout<<endl;
         cout<<"$t0: "<<Registers[8]<<endl;
         cout<<"$t1: "<<Registers[9]<<endl;
         cout<<"$t2: "<<Registers[10]<<endl;
         cout<<"$t3: "<<Registers[11]<<endl;
+        cout<<"$t4: "<<Registers[12]<<endl;
+        cout<<"$t5: "<<Registers[13]<<endl;
+        cout<<"$t6: "<<Registers[14]<<endl;
+        cout<<"$t7: "<<Registers[15]<<endl;
+        cout<<"$t8: "<<Registers[24]<<endl;
+        cout<<"$t8: "<<Registers[25]<<endl;
+
+        cout<<endl;
+        cout<<"Aperte ENTER para continuar"<<endl;
+        cout<<">> ";
+        getline(cin, s);
     }
-
-
-    
-
-
-
 
 }
 
 
 void Mips::etapa01()
 {
+    ciclo++;
     cout<<"ciclo 01"<<endl;
     cout<<"PC: "<<pc<<endl;
     uc.setSinalEtapa1();

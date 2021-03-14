@@ -29,12 +29,16 @@ class Mips
 
         // program counter
         int pc = 0;
+        int ciclo = 0;
 
         // Banco de registradores
         int Registers[32];
 
         // Unidade de controle
         uControl uc;
+
+        //saida
+        FILE *arq;
 
         //
         int A;
@@ -55,6 +59,7 @@ class Mips
         void MemoryData();
         int controlALU();
         void Desvio();
+        void geraTxt(string text);
 
         void etapa01();
         void etapa02();

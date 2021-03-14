@@ -20,7 +20,7 @@ int main()
     while(!stop)
     {
         cout<<endl;
-        cout<<"Deseja inserir o código via arquivo.txt[a] ou via linha de comando[b]"<<endl;
+        cout<<"Deseja inserir o código via arquivo.txt [aperte a] ou via linha de comando [aperte b]"<<endl;
         cout<<">> ";
         getline(cin, opcao);
 
