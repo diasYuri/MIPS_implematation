@@ -16,7 +16,8 @@ class Mips
         Mips();
         ~Mips();
 
-        void start();
+        void start(int tipo, string nometxt);
+        void reset();
 
 
     private:
@@ -24,6 +25,7 @@ class Mips
 
         // Componente da memoria
         int tamInst;
+        int EspReservado = 64;
 
         // program counter
         int pc = 0;

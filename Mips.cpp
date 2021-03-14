@@ -2,6 +2,18 @@
 
 using namespace std;
 
+
+Mips::Mips()
+{
+    cout<<"Mips iniciado"<<endl;
+    reset();
+}
+
+Mips::~Mips()
+{
+    delete [] memoria;
+}
+
 unsigned int Mips::binToDec(string bin, int len)
 {
     unsigned int dec = 0;
@@ -13,18 +25,16 @@ unsigned int Mips::binToDec(string bin, int len)
     return dec;
 }
 
-Mips::Mips()
+void Mips::reset()
 {
-    cout<<"Mips iniciado"<<endl;
     tamInst = 0;
+    pc = 0;
+    EspReservado = 64;
 
     for(int i=0; i<32; i++)
         Registers[i] = 0;
-}
-
-Mips::~Mips()
-{
-    delete [] memoria;
+    //&sp
+    Registers[28] = 256;
 }
 
 int Mips::controlALU()
@@ -88,19 +98,19 @@ void Mips::ALU()
             b = B;
             break;
         case 1:
-            b = 4/4;
+            b = 1;
             break;
         case 2:
             b = SignExtension();
             break; 
         case 3:
+            // Não é necessário fazer o shift left x2
             b = SignExtension();
             break;
         default:
             cout<<"error aluscrb"<<endl;
     }
 
-    //ALUop
     switch(controlALU())
     {
         case 2:
@@ -146,15 +156,12 @@ int Mips::SignExtension()
     int convertido;
     if(res[15] == 1)
     {
-        res = (~res);//inverte res ATENÇÃO
+        res = (~res);
         convertido = (res.to_ulong() + 1) * -1;
     }
     else
         convertido = res.to_ulong();
-    /* ext = convertido;
-    cout<<res<<endl;
-    cout<<convertido<<endl;
-    cout<<ext<<endl; */
+
 
     return convertido;
 }
@@ -166,23 +173,25 @@ void Mips::MemoryData()
 
     // Multiplexador
     if(uc.getIorD())
-        add = ALUout;
+        add = (ALUout/4)+EspReservado;
     else
         add = pc;
     ////////////////
 
-    if(uc.getMemRead())
+    if(uc.getMemRead() && add<=256)
     {
         if(uc.getIRWrite())
             IR = memoria[add];
-        MDR = memoria[add];
+         MDR = memoria[add];
     }
 
     if(uc.getMemWrite())
     {
-        memoria[add] = B;
+        if(add>=EspReservado && add<=256)
+            memoria[add] = B;
+        else if(add<EspReservado || add>256)
+            cout<<"Error: local de memoria invalido"<<endl;
     }
-
 }
 
 
@@ -323,6 +332,8 @@ void Mips::leTxt(string nometxt)
                     bin = result;
                     memoria[tamInst] = binToDec(bin, 32);
                     tamInst++;
+                    if(tamInst>EspReservado)
+                        EspReservado = tamInst;
                 }
             i++;
         }
@@ -331,32 +342,32 @@ void Mips::leTxt(string nometxt)
     fclose(arq);
 }
 
-void Mips::start()
+void Mips::start(int tipo, string nometxt)
 {
-    string nometxt;
-    cout<<"Digite o nome do arquivo: ";
-    getline(cin, nometxt);
-    leTxt(nometxt);
 
+    if(tipo == 1)
+        leTxt(nometxt);
+    else if(tipo == 2)
+    {
+        memoria[tamInst] = binToDec(nometxt, 32);
+        tamInst++;
+    }
+    
 
     
     while(pc<tamInst)
     {
-        cout<<"----------- ETAPA "<<pc+1<<" -----------"<<endl;
+        cout<<"----------- INSTRUCAO "<<pc+1<<" -----------"<<endl;
 
 
         etapa01();
-
         cout<<endl;
         etapa02();
-
         cout<<endl;
         etapa03();
         cout<<endl;
-
         etapa04();
         cout<<endl;
-
         etapa05();  
 
 
